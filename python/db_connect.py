@@ -9,7 +9,7 @@ STRUCT = "CREATE TABLE MOVIES( id, name , actor , actress , director , year );"
 if(not _pl().lower().startswith("window")):
     R, N, G, I, Y = "\033[31;1m", "\u001b[00m", "\u001b[32;1m", "\u001b[7;1m", "\u001b[33;1m"
 else:
-    R,N,G,I,Y = ''
+    R,N,G,I,Y = '', '', '', '', ''
 
 TITLE = ["name", "actor", "actress", "director", "year"]
 
@@ -33,7 +33,7 @@ class Class_db():
             pass
 
     def show_title(self):
-        [ print('{}{:<10}|{}'.format(I,x,N), end='') for x in ['id'] + TITLE ]
+        [ print('{}{:<13}|{}'.format(I,x,N), end='') for x in ['id'] + TITLE ]
         print()
 
     def show(self):
@@ -41,7 +41,7 @@ class Class_db():
             self.show_title()
             for i in self.db.execute("SELECT * FROM MOVIES"):
                 for j in i:
-                    print(f"{j:<10}|", end="")
+                    print(f"{j:<13}|", end="")
                 print()
         except OperationalError:
             print(f"{R}[!]{N} It scheams to be their is no database")
@@ -57,10 +57,10 @@ class Class_db():
             key = [ x.strip() for x in key.split(":") ]
             for i in self.db.execute(f"SELECT * FROM MOVIES WHERE {key[0]}=\"{key[1]}\";"):
                 for j in i:
-                    print(f"{j:<10}|", end="")
+                    print(f"{j:<13}|", end="")
                 print()
-        except KeyboardInterrupt:
-            print(f"{R}[!]{N} It scheams to be their is no database")
+        except OperationalError:
+            print(f"{R}[!]{N} It seems to be their is no database.")
         
     def insert(self, name, actor , actress, director, y):
         try:
@@ -92,7 +92,11 @@ def main():
 <4> Search with    | <column>:<search> example: name:kamal
 <5> Delete with    | <column>:<value> example: name:kamal
 <6> Exit           | exit application.\n\n\n""")
-        opt = int(input("Option: "))
+        try:
+            opt = int(input("Option: "))
+        except ValueError:
+            print("{R}[x]{N} Invalied option")
+
         if(opt == 1):
             name = input(f"Enter Name for the database[{name}]:").strip()
             if(name):
@@ -120,6 +124,8 @@ def main():
                 cdb.delete(n)
         elif(opt == 6):
             return
+        else:
+            print("{R}[x]{N} Invalied option")
 
 main()
 
