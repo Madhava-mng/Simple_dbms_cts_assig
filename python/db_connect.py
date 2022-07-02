@@ -7,9 +7,9 @@ DB_NAME = "default.db"
 STRUCT = "CREATE TABLE MOVIES( id, name , actor , actress , director , year );"
 
 if(not _pl().lower().startswith("window")):
-    R, N, G, I, Y = "\033[31;1m", "\u001b[00m", "\u001b[32;1m", "\u001b[7;1m", "\u001b[33;1m"
+    R, N, G, I, Y, y, g = "\033[31;1m", "\u001b[00m", "\u001b[32;1m", "\u001b[7;1m", "\u001b[33;1m", "\033[43m", "\033[32m"
 else:
-    R,N,G,I,Y = '', '', '', '', ''
+    R,N,G,I,Y,y,g = '', '', '', '', '','',''
 
 TITLE = ["name", "actor", "actress", "director", "year"]
 
@@ -47,9 +47,12 @@ class Class_db():
             print(f"{R}[!]{N} It scheams to be their is no database")
 
     def delete(self, key):
-        key = [ x.strip() for x in key.split(":") ]
-        self.db.execute(f"DELETE FROM MOVIES WHERE {key[0]}=\"{key[1]}\";")
-        self.commit()
+        try:
+            key = [ x.strip() for x in key.split(":") ]
+            self.db.execute(f"DELETE FROM MOVIES WHERE {key[0]}=\"{key[1]}\";")
+            self.commit()
+        except:
+            print(f"{R}[x]{N} Example: name:nameOfTheMovie\n actor:actorName")
         
     def search(self, key):
         try:
@@ -61,6 +64,8 @@ class Class_db():
                 print()
         except OperationalError:
             print(f"{R}[!]{N} It seems to be their is no database.")
+        except:
+            print(f"{R}[x]{N} Example: name:nameOfTheMovie\n actor:actorName")
         
     def insert(self, name, actor , actress, director, y):
         try:
@@ -82,20 +87,23 @@ def main():
     cdb = Class_db()
     f = 1
     name = DB_NAME
+    print("\n"* 30)
     while(1):
         print(f"""
  {G}✓{N}  {name}  {Y}(Active){N}
 
-<1> Set data base  | Default value is default
-<2> Insert details | Insert detail.
-<3> Show details   | shows all the details.
-<4> Search with    | <column>:<search> example: name:kamal
-<5> Delete with    | <column>:<value> example: name:kamal
-<6> Exit           | exit application.\n\n\n""")
+Use below options 1,6 for start Intrection.
+
+<1> Set data base   - To Change database name
+<2> Insert details  - Insert detail for movie.
+<3> Show details    - shows all the details.
+<4> Search with     - <column>:<search> example: name:kamal
+<5> Delete with     - <column>:<value> example: name:kamal
+<6> Exit            - exit application.\n\n\n""")
         try:
             opt = int(input("Option: "))
         except ValueError:
-            print("{R}[x]{N} Invalied option")
+            print("\n{R}[x]{N} Invalied option\n")
 
         if(opt == 1):
             name = input(f"Enter Name for the database[{name}]:").strip()
@@ -115,17 +123,17 @@ def main():
         elif(opt == 3):
             cdb.show()
         elif(opt == 4):
-            n = input(f"Search <key:value>:").strip()
+            n = input(f"Search <column>:<value>:").strip()
             if(n):
                 cdb.search(n)
         elif(opt == 5):
-            n = input(f"Delete <key:value>:").strip()
+            n = input(f"Delete <column>:<value>:").strip()
             if(n):
                 cdb.delete(n)
         elif(opt == 6):
             return
         else:
-            print("{R}[x]{N} Invalied option")
+            print("\n{R}[x]{N} Invalied option\n")
 
 main()
 
